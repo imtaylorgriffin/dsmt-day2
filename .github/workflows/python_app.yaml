@@ -2,7 +2,7 @@
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
 
 # TODO: Change the workflow name to something more specific
-name: Python application
+name: DSMT-Day2-CI
 
 # This defines the triggers for the workflow
 # i.e. when the workflow will run
@@ -29,12 +29,17 @@ jobs:
 
     # This step sets up Python on the runner
     # TODO: Change the Python version to 3.12
-    - name: Set up Python 3.10
+    - name: Set up Python 3.12
       uses: actions/setup-python@v3
       with:
-        python-version: "3.10"
+        python-version: "3.12"
 
     # TODO: Install uv on the runner
+    # think about using readme uv step, search for uv workflow on github actions
+    - name: Install uv 
+      uses: astral-sh/setup-uv@v6
+      # Verify installation
+      run: uv --version
 
 
 
@@ -44,25 +49,29 @@ jobs:
     # This step installs dependencies
     # TODO: Replace the run block, using `uv` to sync the environment
     - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install flake8 pytest
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      run: uv sync --dev
 
     # This step runs unit tests with pytest
     # TODO: Update the run block. Use: uv run -m pytest
     # (we need -m so that our tests can find our notebook code)
     - name: Test with pytest
-      run: |
-        pytest
+      run: uv run -m pytest
 
     # This step runs the linter against the codebase
     # TODO: Replace the run block to use our preferred linter
-    - name: Lint with flake8
-      run: |
-        # stop the build if there are Python syntax errors or undefined names
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+    - name: Install Ruff
+      run: uv pip install ruff
+    
+
+    - name: Lint with Ruff
+      run: uv run ruff check . --line-length=127
+
 
     # TODO: Add steps to run formatting steps and type checking
+    - name: Check formatting with Ruff
+      run: uv run ruff format --check .
+
+    - name: Run type checker with ty
+      run: |
+          uv pip install ty
+          uv run ty check .
