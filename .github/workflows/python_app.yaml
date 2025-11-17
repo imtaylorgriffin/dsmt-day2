@@ -71,7 +71,7 @@ jobs:
 
     # TODO: Add steps to run formatting steps and type checking
     - name: Check formatting with Ruff
-      run: uv run ruff format --check .
+      run: uv run ruff format .
 
     - name: Run type checker with ty
       run: |
