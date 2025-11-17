@@ -1,0 +1,69 @@
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+
+name: Python application
+
+# This defines the triggers for the workflow
+# i.e. when the workflow will run
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+
+    # This defines the type of machine to run the job on
+    runs-on: ubuntu-latest
+
+    steps:
+
+    # This step copies your repository code to the runner
+    - uses: actions/checkout@v4
+
+    # This step sets up Python on the runner
+    # TODO: Change the Python version to 3.12
+    - name: Set up Python 3.12
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.12"
+
+    # The next steps use *run* to execute commands on the runner
+    # This is just like typing commands in the Codespace terminal
+
+    # This step installs dependencies, but we have an easier way
+    # TODO: Replace the run block, using `uv` to sync the environment
+    - name: Install dependencies
+      run: |
+        uv sync
+
+    # This step runs unit tests with pytest
+    # TODO: Update the run block. Use: uv run -m pytest
+    # (we need -m so that our tests can find our notebook code)
+    - name: Test with pytest
+      run: |
+        uv run -m pytest
+
+    # This step runs the linter against the codebase
+    # TODO: Replace the run block to use our preferred linter
+    - name: Lint with ruff
+      run: |
+        uvx ruff check
+
+    # TODO: Add steps to run formatting steps and type checking
+
+    - name: Format with ruff
+      run: |
+        uvx ruff format
+
+    - name: Type check with ty
+      run: |
+        uvx ty check
+
+    - name: Format imports with isort
+      run: |
+        uvx isort .
