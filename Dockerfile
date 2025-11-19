@@ -23,4 +23,4 @@ RUN uv sync
 EXPOSE 8080
 
 # Run marimo with uv
-CMD ["uv", "run", "marimo", "run", "--host", "0.0.0.0", "--port", "8080", "spotify_eda.py"]
+CMD ["uv", "run", "marimo", "run", "--host", "0.0.0.0", "--port", "8080", "notebooks/spotify_eda.py"]
